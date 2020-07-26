@@ -29,7 +29,7 @@ function App() {
       {
         list.map(function(item){
           return(
-          <div>            
+          <div key={item.objectID}>            
             <span>
               <a href={item.url}>{item.title}</a>
             </span>
