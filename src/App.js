@@ -1,8 +1,6 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {Component} from 'react';
 import './App.css';
 
-function App() {
   const list=[
     {
       title:'React',
@@ -21,14 +19,25 @@ function App() {
       objectID:1     
     }
   ];
-  return (
-    <div className="App">
-      <header className="App-header">
-         <img src={logo} alt="Logo" width="90" height="90" />
 
+class App extends Component 
+{
+  constructor(props)
+  {
+    super(props);
+    this.state={
+      list: list,
+    };
+
+    //this.onDismiss = this.onDismiss.bind(this);
+  }
+
+  render()
+  {
+    return (
+    <div className="App">
       {
-        list.map(function(item){
-          return(
+        this.state.list.map(item=>
           <div key={item.objectID}>            
             <span>
               <a href={item.url}>{item.title}</a>
@@ -36,13 +45,27 @@ function App() {
             <span>{item.author}</span>
             <span>{item.num_comments}</span>
             <span>{item.points}</span>
+            <span>
+              <button 
+              onClick={() => this.onDismiss(item.objectID)} 
+              type="button"
+              >
+                Dismiss
+              </button>
+            </span>
           </div>            
-          );
-        })}
-    </header>    
+        )}
     </div>
+    );  
+  }
 
-  );
+  onDismiss(id)
+  {
+    console.log(this);
+
+    const updateList = this.state.list.filter(item=>item.objectID!==id);
+    this.setState( {list: updateList} );
+  }
 
 }
 
