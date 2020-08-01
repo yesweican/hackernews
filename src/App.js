@@ -1,25 +1,6 @@
 import React, {Component} from 'react';
 import './App.css';
 
-  const list=[
-    {
-      title:'React',
-      url: 'https://reactjs.org',
-      author:'jordan walke',
-      num_comments:3,
-      points:4,
-      objectID:0
-    },
-    {
-      title:'Redux',
-      url: 'https://redux.js.org',
-      author:'Dan Abramov, Andrew Clark',
-      num_comments:2,
-      points:5,
-      objectID:1     
-    }
-  ];
-
  const DEFAULT_QUERY = 'redux';
  const PATH_BASE = 'https://hn.algolia.comapi/v1';
  const PATH_SEARCH = '/search';
@@ -31,18 +12,38 @@ class App extends Component
   {
     super(props);
     this.state={
-      searchTerm:'',
-      list: list,
+      searchTerm: DEFAULT_QUERY,
+      list: [],
     };
 
     //no effect?????
     this.onDismiss = this.onDismiss.bind(this);
+
+    //these were needed
+    this.setSearchTopStories = this.setSearchTopStories.bind(this);
     this.onSearchChange = this.onSearchChange.bind(this);
     this.onSearchSubmit = this.onSearchSubmit.bind(this);
+
+
+  }
+
+  componentDidMount()
+  {
+    const {searchTerm} = this.state;
+
+     fetch('${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}')
+    .then(response=>response.json())
+    .then(result=>this.setSearchTopStories(result))
+    .catch(error=>error);   
   }
 
   render()
   {
+    const {searchTerm, list } = this.state;
+
+    if(!list)
+      return null;
+
     return (
     <div className="App">
       <form>
@@ -72,6 +73,11 @@ class App extends Component
     );  
   }
 
+  setSearchTopStories(result)
+  {
+    this.setState({ list: result.hits });
+  }
+
   onSearchChange(event)
   {
     this.setState({searchTerm: event.target.value});
@@ -80,14 +86,21 @@ class App extends Component
   onSearchSubmit()
   {
     alert(this.state.searchTerm);
+    const {searchTerm} = this.state;
+    fetch('${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}')
+    .then(response=>response.json())
+    .then(result=>this.setSearchTopStories(result))
+    .catch(error=>error);
   }
 
   onDismiss(id)
   {
     console.log(this);
 
-    const updateList = this.state.list.filter(item=>item.objectID!==id);
-    this.setState( {list: updateList} );
+    //const updatedHits = this.state.results.hits.filter(item=>item.objectID!==id);
+    //this.setState( {results: {...this.state.result, hits:updatedHits} });
+    const updatedHits = this.state.list.filter(item=>item.objectID!==id);
+    this.setState( { list:updatedHits});
   }
 
 }
