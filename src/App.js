@@ -20,22 +20,35 @@ import './App.css';
     }
   ];
 
+ const DEFAULT_QUERY = 'redux';
+ const PATH_BASE = 'https://hn.algolia.comapi/v1';
+ const PATH_SEARCH = '/search';
+ const PARAM_QUERY = 'query=';
+
 class App extends Component 
 {
   constructor(props)
   {
     super(props);
     this.state={
+      searchTerm:'',
       list: list,
     };
 
-    //this.onDismiss = this.onDismiss.bind(this);
+    //no effect?????
+    this.onDismiss = this.onDismiss.bind(this);
+    this.onSearchChange = this.onSearchChange.bind(this);
+    this.onSearchSubmit = this.onSearchSubmit.bind(this);
   }
 
   render()
   {
     return (
     <div className="App">
+      <form>
+            <input type="text" onChange={this.onSearchChange}/>
+            <button onClick={this.onSearchSubmit}>Submit</button>
+      </form>    
       {
         this.state.list.map(item=>
           <div key={item.objectID}>            
@@ -47,7 +60,7 @@ class App extends Component
             <span>{item.points}</span>
             <span>
               <button 
-              onClick={() => this.onDismiss(item.objectID)} 
+              onClick={()=>{this.onDismiss(item.objectID)}} 
               type="button"
               >
                 Dismiss
@@ -57,6 +70,16 @@ class App extends Component
         )}
     </div>
     );  
+  }
+
+  onSearchChange(event)
+  {
+    this.setState({searchTerm: event.target.value});
+  }
+
+  onSearchSubmit()
+  {
+    alert(this.state.searchTerm);
   }
 
   onDismiss(id)
