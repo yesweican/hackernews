@@ -2,8 +2,8 @@ import React, {Component} from 'react';
 import './App.css';
 
  const DEFAULT_QUERY = 'redux';
- const PATH_BASE = 'https://hn.algolia.comapi/v1';
- const PATH_SEARCH = '/search';
+ const PATH_BASE = 'https://hn.algolia.com/api/v1';
+ const PARAM_SEARCH = '/search';
  const PARAM_QUERY = 'query=';
 
 class App extends Component 
@@ -27,15 +27,15 @@ class App extends Component
 
   }
 
-  componentDidMount()
-  {
-    const {searchTerm} = this.state;
+  // componentDidMount()
+  // {
+  //   const {searchTerm} = this.state;
 
-     fetch('${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}')
-    .then(response=>response.json())
-    .then(result=>this.setSearchTopStories(result))
-    .catch(error=>error);   
-  }
+  //    fetch(`${PATH_BASE}${PARAM_SEARCH}?${PARAM_QUERY}${searchTerm}`)
+  //   .then(response=>response.json())
+  //   .then(result=>this.setSearchTopStories(result))
+  //   .catch(error=>error);   
+  // }
 
   render()
   {
@@ -87,7 +87,8 @@ class App extends Component
   {
     alert(this.state.searchTerm);
     const {searchTerm} = this.state;
-    fetch('${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}')
+    const url = `${PATH_BASE}${PARAM_SEARCH}?${PARAM_QUERY}${searchTerm}`;
+    fetch(url)
     .then(response=>response.json())
     .then(result=>this.setSearchTopStories(result))
     .catch(error=>error);
