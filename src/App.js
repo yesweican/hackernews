@@ -6,15 +6,17 @@ import './App.css';
  const PARAM_SEARCH = '/search';
  const PARAM_QUERY = 'query=';
 
+ function isSearched(searchTerm)
+ {
+   return function(item){return item.title.toLowerCase().includes(searchTerm.toLowerCase())};
+ }
+
 class App extends Component 
 {
   constructor(props)
   {
-    super(props);
-    this.state={
-      searchTerm: DEFAULT_QUERY,
-      list: [],
-    };
+   super(props);
+   this.state = { list:null, searchTerm:DEFAULT_QUERY,};
 
     //no effect?????
     this.onDismiss = this.onDismiss.bind(this);
@@ -23,8 +25,6 @@ class App extends Component
     this.setSearchTopStories = this.setSearchTopStories.bind(this);
     this.onSearchChange = this.onSearchChange.bind(this);
     this.onSearchSubmit = this.onSearchSubmit.bind(this);
-
-
   }
 
   // componentDidMount()
@@ -41,34 +41,21 @@ class App extends Component
   {
     const {searchTerm, list } = this.state;
 
-    if(!list)
-      return null;
-
     return (
     <div className="App">
-      <form>
-            <input type="text" onChange={this.onSearchChange}/>
-            <button onClick={this.onSearchSubmit}>Submit</button>
-      </form>    
-      {
-        this.state.list.map(item=>
-          <div key={item.objectID}>            
-            <span>
-              <a href={item.url}>{item.title}</a>
-            </span>
-            <span>{item.author}</span>
-            <span>{item.num_comments}</span>
-            <span>{item.points}</span>
-            <span>
-              <button 
-              onClick={()=>{this.onDismiss(item.objectID)}} 
-              type="button"
-              >
-                Dismiss
-              </button>
-            </span>
-          </div>            
-        )}
+      <Search  value={searchTerm} onChange={this.onSearchChange} onSubmit={this.onSearchSubmit}>
+        Search
+      </Search>
+    {
+      list ?
+          <Table  list={list} pattern={searchTerm} onDismiss={this.onDismiss}>
+            Data Table
+          </Table>
+          :
+          null
+    }
+
+ 
     </div>
     );  
   }
@@ -104,6 +91,52 @@ class App extends Component
     this.setState( { list:updatedHits});
   }
 
+}
+
+class Search extends Component
+{
+  render() {
+    const { value, onChange, onSubmit } = this.props;
+    return (
+      <form>
+      <input type="text" value={value} onChange={onChange} ></input>
+      <button onClick={onSubmit}>Submit</button>
+      </form>     
+    );
+  }
+}
+
+class Table extends Component
+{
+  render()
+  {
+    const { list, pattern, onDismiss } = this.props;
+
+    return (
+      <div>
+        {
+          list.filter(isSearched(pattern)).map(item=>
+            <div key={item.objectID}>            
+            <span>
+              <a href={item.url}>{item.title}</a>
+            </span>
+            <span>{item.author}</span>
+            <span>{item.num_comments}</span>
+            <span>{item.points}</span>
+            <span>
+              <button 
+              onClick={()=>{this.onDismiss(item.objectID)}} 
+              type="button"
+              >
+                Dismiss
+              </button>
+            </span>
+          </div> 
+          )
+        }
+      </div>
+    )
+  }
 }
 
 export default App;
