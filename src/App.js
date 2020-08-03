@@ -72,7 +72,7 @@ class App extends Component
 
   onSearchSubmit()
   {
-    alert(this.state.searchTerm);
+    console.log(this.state.searchTerm);
     const {searchTerm} = this.state;
     const url = `${PATH_BASE}${PARAM_SEARCH}?${PARAM_QUERY}${searchTerm}`;
     fetch(url)
