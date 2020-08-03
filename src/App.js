@@ -13,10 +13,12 @@ import './App.css';
 
 class App extends Component 
 {
+ 
+  state={ searchTerm: DEFAULT_QUERY, list:[], };
+
   constructor(props)
   {
-   super(props);
-   this.state = { list:null, searchTerm:DEFAULT_QUERY,};
+    super(props);
 
     //no effect?????
     this.onDismiss = this.onDismiss.bind(this);
@@ -27,15 +29,15 @@ class App extends Component
     this.onSearchSubmit = this.onSearchSubmit.bind(this);
   }
 
-  // componentDidMount()
-  // {
-  //   const {searchTerm} = this.state;
+  componentDidMount()
+  {
+    const {searchTerm} = this.state;
 
-  //    fetch(`${PATH_BASE}${PARAM_SEARCH}?${PARAM_QUERY}${searchTerm}`)
-  //   .then(response=>response.json())
-  //   .then(result=>this.setSearchTopStories(result))
-  //   .catch(error=>error);   
-  // }
+     fetch(`${PATH_BASE}${PARAM_SEARCH}?${PARAM_QUERY}${searchTerm}`)
+    .then(response=>response.json())
+    .then(result=>this.setSearchTopStories(result))
+    .catch(error=>error);   
+  }
 
   render()
   {
@@ -67,6 +69,7 @@ class App extends Component
 
   onSearchChange(event)
   {
+    console.log(event.target.value);
     this.setState({searchTerm: event.target.value});
   }
 
