@@ -14,8 +14,6 @@ import './App.css';
 class App extends Component 
 {
  
-  state={ searchTerm: DEFAULT_QUERY, list:[], };
-
   constructor(props)
   {
     super(props);
@@ -27,17 +25,19 @@ class App extends Component
     this.setSearchTopStories = this.setSearchTopStories.bind(this);
     this.onSearchChange = this.onSearchChange.bind(this);
     this.onSearchSubmit = this.onSearchSubmit.bind(this);
+
+    this.state={ searchTerm: DEFAULT_QUERY, list:[], };    
   }
 
-  componentDidMount()
-  {
-    const {searchTerm} = this.state;
+  // componentDidMount()
+  // {
+  //   const {searchTerm} = this.state;
 
-     fetch(`${PATH_BASE}${PARAM_SEARCH}?${PARAM_QUERY}${searchTerm}`)
-    .then(response=>response.json())
-    .then(result=>this.setSearchTopStories(result))
-    .catch(error=>error);   
-  }
+  //    fetch(`${PATH_BASE}${PARAM_SEARCH}?${PARAM_QUERY}${searchTerm}`)
+  //   .then(response=>response.json())
+  //   .then(result=>this.setSearchTopStories(result))
+  //   .catch(error=>error);   
+  // }
 
   render()
   {
@@ -57,13 +57,13 @@ class App extends Component
           null
     }
 
- 
     </div>
     );  
   }
 
   setSearchTopStories(result)
   {
+    console.log(result);    
     this.setState({ list: result.hits });
   }
 
@@ -101,10 +101,10 @@ class Search extends Component
   render() {
     const { value, onChange, onSubmit } = this.props;
     return (
-      <form>
+      <div>
       <input type="text" value={value} onChange={onChange} ></input>
       <button onClick={onSubmit}>Submit</button>
-      </form>     
+      </div>     
     );
   }
 }
