@@ -3,8 +3,8 @@ import './App.css';
 
  const DEFAULT_QUERY = 'redux';
  const PATH_BASE = 'https://hn.algolia.com/api/v1';
- const PARAM_SEARCH = '/search';
- const PARAM_QUERY = 'query=';
+ const PATH_SEARCH = '/search';
+ const PARAM_SEARCH = 'query=';
 
  function isSearched(searchTerm)
  {
@@ -18,30 +18,37 @@ class App extends Component
   {
     super(props);
 
-    //no effect?????
-    this.onDismiss = this.onDismiss.bind(this);
+    this.state={ result: null, searchTerm: DEFAULT_QUERY, };    
+
+
 
     //these were needed
     this.setSearchTopStories = this.setSearchTopStories.bind(this);
+    this.fetchSearchTopStories = this.fetchSearchTopStories.bind(this); 
     this.onSearchChange = this.onSearchChange.bind(this);
     this.onSearchSubmit = this.onSearchSubmit.bind(this);
-
-    this.state={ searchTerm: DEFAULT_QUERY, list:[], };    
+    //no effect?????
+    this.onDismiss = this.onDismiss.bind(this);
   }
 
-  // componentDidMount()
-  // {
-  //   const {searchTerm} = this.state;
+  fetchSearchTopStories(searchTerm)
+  {
+    fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}`)
+    .then(response=>response.json())
+    .then(result=>this.setSearchTopStories(result))
+    .catch(error=>error);   
+  }
 
-  //    fetch(`${PATH_BASE}${PARAM_SEARCH}?${PARAM_QUERY}${searchTerm}`)
-  //   .then(response=>response.json())
-  //   .then(result=>this.setSearchTopStories(result))
-  //   .catch(error=>error);   
-  // }
+  componentDidMount()
+  {
+    const {searchTerm} = this.state;
+
+    this.fetchSearchTopStories(searchTerm);
+  }
 
   render()
   {
-    const {searchTerm, list } = this.state;
+    const {searchTerm, result } = this.state;
 
     return (
     <div className="App">
@@ -49,8 +56,8 @@ class App extends Component
         Search
       </Search>
     {
-      list ?
-          <Table  list={list} pattern={searchTerm} onDismiss={this.onDismiss}>
+      result ?
+          <Table  list={result.hits} pattern={searchTerm} onDismiss={this.onDismiss}>
             Data Table
           </Table>
           :
@@ -64,7 +71,7 @@ class App extends Component
   setSearchTopStories(result)
   {
     console.log(result);    
-    this.setState({ list: result.hits });
+    this.setState({ result });
   }
 
   onSearchChange(event)
@@ -77,7 +84,7 @@ class App extends Component
   {
     console.log(this.state.searchTerm);
     const {searchTerm} = this.state;
-    const url = `${PATH_BASE}${PARAM_SEARCH}?${PARAM_QUERY}${searchTerm}`;
+    const url = `${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}`;
     fetch(url)
     .then(response=>response.json())
     .then(result=>this.setSearchTopStories(result))
@@ -88,8 +95,8 @@ class App extends Component
   {
     console.log(this);
 
-    //const updatedHits = this.state.results.hits.filter(item=>item.objectID!==id);
-    //this.setState( {results: {...this.state.result, hits:updatedHits} });
+    //const updatedHits = this.state.result.hits.filter(item=>item.objectID!==id);
+    //this.setState( {result: {...this.state.result, hits:updatedHits} });
     const updatedHits = this.state.list.filter(item=>item.objectID!==id);
     this.setState( { list:updatedHits});
   }
